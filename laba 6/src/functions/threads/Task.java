@@ -50,23 +50,4 @@ public class Task {
     public synchronized int getTasks() {
         return tasks;
     }
-
-    public synchronized TaskData getTaskData() {
-        return new TaskData(f, left, right, step);
-    }
-
-    public static class TaskData {
-        public final Function function;
-        public final double leftBorder;
-        public final double rightBorder;
-        public final double integrationStep;
-
-        public TaskData(Function function, double leftBorder,
-                        double rightBorder, double integrationStep) {
-            this.function = function;
-            this.leftBorder = leftBorder;
-            this.rightBorder = rightBorder;
-            this.integrationStep = integrationStep;
-        }
-    }
 }

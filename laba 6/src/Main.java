@@ -6,6 +6,7 @@ import functions.threads.*;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
+import java.util.concurrent.Semaphore;
 
 
 import static java.nio.file.Files.newBufferedWriter;
@@ -186,7 +187,7 @@ public class Main {
         System.out.println("Запуск улучшенной версии с семафором...");
 
         Task task = new Task(100);
-        Semaphore semaphore = new Semaphore();
+        Semaphore semaphore = new Semaphore(1);
 
         // Создание потоков
         Generator generator = new Generator(task, semaphore);

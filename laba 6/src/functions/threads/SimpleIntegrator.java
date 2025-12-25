@@ -1,6 +1,6 @@
 package functions.threads;
-
-import functions.Functions;
+import functions.Function;
+import static functions.Functions.integrate;
 
 public class SimpleIntegrator implements Runnable {
     private Task task;
@@ -11,31 +11,40 @@ public class SimpleIntegrator implements Runnable {
 
     @Override
     public void run() {
-        try {
-            for (int i = 0; i < task.getTasks(); i++) {
-                Task.TaskData data;
+        int processed = 0;
 
-                synchronized (task) {
-                    data = task.getTaskData();
-                }
+        while (processed < task.getTasks()) {
+            Function function = null;
+            double left = 0;
+            double right = 0;
+            double step = 0;
 
-                if (data.function == null) {
-                    Thread.sleep(1);
-                    continue;
-                }
-
-                double result = Functions.integrate(
-                        data.function,
-                        data.leftBorder,
-                        data.rightBorder,
-                        data.integrationStep
-                );
-
-                System.out.printf("Result %.4f %.4f %.4f %.8f%n", data.leftBorder, data.rightBorder, data.integrationStep, result);
-                Thread.sleep(10);
+            synchronized (task) {
+                function = task.getF();
+                left = task.getLeft();
+                right = task.getRight();
+                step = task.getStep();
+                task.setF(null);
             }
-        } catch (InterruptedException e) {
-            System.out.println("Integrator error: " + e.getMessage());
+
+            if (function != null) {
+                processed++;
+                try {
+                    double result = integrate(function, left, right, step);
+                    System.out.printf("Result %.4f %.4f %.4f %.8f%n", left, right, step, result);
+                } catch (Exception e) {
+                    System.out.println("Integrator error: " + e.getMessage());
+                }
+            }
+            else {
+                try {
+                    Thread.sleep(5);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    break;
+                }
+            }
         }
+        System.out.println("Integrator завершен");
     }
 }

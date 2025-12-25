@@ -1,8 +1,7 @@
 package functions.threads;
-
-import functions.Function;
 import functions.basic.Log;
 import java.util.Random;
+import java.util.concurrent.Semaphore;
 
 public class Generator extends Thread {
     private Task task;
@@ -28,14 +27,14 @@ public class Generator extends Thread {
                 double rightBorder = 100 + random.nextDouble() * 100;
                 double step = random.nextDouble();
 
-                semaphore.startWrite();
+                semaphore.acquire();
                 try {
                     task.setF(new Log(base));
                     task.setLeft(leftBorder);
                     task.setRight(rightBorder);
                     task.setStep(step);
                 } finally {
-                    semaphore.endWrite();
+                    semaphore.release();
                 }
 
                 System.out.printf("Source %.4f %.4f %.4f%n", leftBorder, rightBorder, step);
